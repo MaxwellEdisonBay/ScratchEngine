@@ -1,9 +1,12 @@
 package jade;
 
+import org.lwjgl.BufferUtils;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryUtil;
+
+import java.nio.IntBuffer;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
@@ -95,6 +98,13 @@ public class Window {
         if (glfwWindow == MemoryUtil.NULL) {
             throw new IllegalStateException("Failed to create GLFW window");
         }
+
+        // I added this to fix taskbar/topbar height offset issue
+        IntBuffer createdWinWidth = BufferUtils.createIntBuffer(1);
+        IntBuffer createdWinHeight = BufferUtils.createIntBuffer(1);
+        glfwGetWindowSize(glfwWindow, createdWinWidth, createdWinHeight);
+        setWidth(createdWinWidth.get(0));
+        setHeight(createdWinHeight.get(0));
 
         glfwSetCursorPosCallback(glfwWindow, MouseListener::mousePosCallback);
         glfwSetMouseButtonCallback(glfwWindow, MouseListener::mouseButtonCallback);
